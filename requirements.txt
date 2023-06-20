@@ -23,7 +23,7 @@ xgboost
 lightgbm
 torch
 tensorflow
-opencv-python 
+opencv-python-headless
 albumentations 
 efficientnet-pytorch==0.7.1
 tqdm
