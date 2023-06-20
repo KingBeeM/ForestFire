@@ -32,6 +32,8 @@ import googlemaps
 import os
 import warnings
 
+import streamlit as st
+
 def main():
     st.write("hellow")
     st.write(torch.__version__)
