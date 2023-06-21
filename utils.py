@@ -15,7 +15,7 @@ from PIL import Image
 import warnings
 warnings.filterwarnings("ignore")
 
-KEY_PATH = ".config/"
+KEY_PATH = ".streamlit/"
 
 key_path = KEY_PATH + "fireforest-team-ys-2023.json"
 servicekey_path = KEY_PATH + "serviceKey.json"
