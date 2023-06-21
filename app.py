@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
-
 import streamlit as st
 from streamlit_option_menu import option_menu
+
 import utils
+import home_app
+import data_app
+import eda_app
+import stat_app
+import model_app
+import service_app
+
+import warnings
+warnings.filterwarnings("ignore")
 
 def main():
     """
@@ -12,11 +21,31 @@ def main():
     st.set_page_config(page_title="Forest Fire ")
     # Streamlit 앱 실행
     with st.sidebar:
-        selected = option_menu("Main Menu", ["INTRO", "DATA", "EDA", "STAT", "ML", "DL"],
-                               icons=["house", "card-checklist", "bar-chart", "clipboard-data", "gear", "gear"],
+        selected = option_menu("Main Menu", ["HOME", "DATA", "EDA", "STAT", "MODEL", "SERVICE"],
+                               icons=["house", "card-checklist", "bar-chart", "clipboard-data", "gear"],
                                menu_icon="cast",
                                default_index=0,
-                               orientation="vertical")
+                               orientation="vertical",
+                               key = 'main_option',
+                               styles = {
+                                   "container": {"padding": "5!important", "background-color": "#fafafa"},
+                                   "icon": {"color": "orange", "font-size": "25px"},
+                                   "nav-link": {"font-size": "16px", "text-align":"left", "margin":"0px", "--hover-color": "#eee"},
+                                   "nav-link-selected": {"background-color": "#02ab21"},
+                               })
+
+    if selected == "HOME":
+        home_app.home_app()
+    elif selected == "DATA":
+        data_app.data_app()
+    elif selected == "EDA":
+        pass
+    elif selected == "STAT":
+        pass
+    elif selected == "MODEL":
+        model_app.model_app()
+    elif selected == "SERVICE":
+        pass
 
 if __name__ == "__main__":
     main()
