@@ -489,10 +489,6 @@ def home_app():
     """
         Renders the introduction section of the app, including tabs for overview, objectives, and analysis phases.
     """
-
-    st.subheader("강원도 실시간 산불발생위험지수")
-    st.markdown("---")
-
     weather_stations = get_dataframe_from_bigquery("PREPROCESSING_DATA", "weather_stations").sort_values(["stnId"])
     gangwon_regions = get_geodataframe_from_bigquery("PREPROCESSING_DATA", "gangwon_regions")
 
@@ -523,4 +519,33 @@ def home_app():
     dwi_df = pd.DataFrame(dwi_data, columns=['w_regions', 'DWI'])
     merged_df = gangwon_regions.merge(dwi_df, on='w_regions', how='left')
 
-    create_dwi_choropleth_map(merged_df, "geometry", "DWI")
+
+    empyt1, con1, empty2 = st.columns([0.5, 1.0, 0.5])
+    empyt1, con2, empty2 = st.columns([0.5, 0.5, 0.5])
+    empyt1, con3, empty2 = st.columns([0.4, 1.0, 0.4])
+
+    with con1:
+        st.markdown(
+            "<h2 style='text-align: center; color: black;'>강원도 산불 예측 및 피해 최소화 프로젝트</span>", unsafe_allow_html=True)
+        st.write('<hr>', unsafe_allow_html=True)
+    with con2:
+        st.markdown("<h4 style='font-size: 24px; text-align: center; color: black;'>🔥🌳 실시간 산불위험지수(DWI) 산출 🌳🔥</h4>", unsafe_allow_html=True)
+        create_dwi_choropleth_map(merged_df, "geometry", "DWI")
+    with con3:
+        st.write(
+            """
+                강원도 9개 지역별 설정한 ML Model 에 입력하여, 얻어진 확률들의 예측치를 이용하여 산불위험지수(DWI) 지도시각화
+            """
+        )
+
+    st.write('<hr>', unsafe_allow_html=True)
+
+    # Link
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.info('**Data Analyst: [@BLOG]()**', icon="💡")
+    with c2:
+        st.info('**GitHub: [@GitHub](https://github.com/)**', icon="💻")
+    with c3:
+        st.info(
+            '**Data: [Public API](https://www.data.go.kr/data/15059093/openapi.do)**', icon="📕")

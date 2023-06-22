@@ -88,24 +88,11 @@ def split_train_test(data):
 
     X_train_over, y_train_over = smote.fit_resample(X_train, y_train)
 
-    st.write('======================================================')
-    st.write("SMOTE 적용 전 학습용 피처/레이블 데이터 세트 : ", X_train.shape, y_train.shape)
-    st.write('======================================================')
-    st.write('SMOTE 적용 후 학습용 피처/레이블 데이터 세트 :', X_train_over.shape, y_train_over.shape)
-    st.write('======================================================')
-    st.write('SMOTE 적용 후 값의 분포 :\n', pd.Series(y_train_over).value_counts())
-
     X_test = test_data.drop(['w_regions', 'tm', 'fire_occur'], axis=1)
     y_test = test_data['fire_occur']
 
     X_test = X_test.astype(float)
     y_test = y_test.astype(int)
-
-    st.write('======================================================')
-    st.write("테스트용 피처/레이블 데이터 세트 : ", X_test.shape, y_test.shape)
-    st.write('======================================================')
-    st.write('테스트 데이터 값의 분포 :\n', pd.Series(y_test).value_counts())
-    st.write('======================================================')
 
     return X_train_over, X_test, y_train_over, y_test
 
@@ -358,8 +345,6 @@ def plot_dwi_intervals(y_real, pred, pred_proba, num_intervals=10):
 
     df = pd.DataFrame(data)
 
-    st.dataframe(df)
-
     plt.figure()
     # 그래프 그리기
     plt.plot(df['DWI'], df['Forestfire_occur'], marker='o', label='Forestfire_occur', color="red")
@@ -395,14 +380,14 @@ def processing(data, model):
     # LGBM
     lgb_model = train_lightgbm(X_train, y_train)
 
-    empty1, con1, empty2 = st.columns([0.3, 1.0, 0.3])
-    empyt1, con2, con3, empty2 = st.columns([0.3, 0.5, 0.5, 0.3])
-    empyt1, con4, empty2 = st.columns([0.3, 1.0, 0.3])
-    empyt1, con5, con6, empty2 = st.columns([0.3, 0.5, 0.5, 0.3])
+    empty1, con1, empty2, con2, empty3 = st.columns([0.1, 0.5, 0.1, 0.5, 0.1])
+    empyt1, con3, empty2, con4, empty3 = st.columns([0.1, 0.5, 0.1, 0.5, 0.1])
+    empyt1, con5, empty2 = st.columns([0.1, 1.0, 0.1])
 
     if model == "LogisticRegression":
-        with con2:
-            st.markdown("Train")
+        with con3:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>Train feature_importance</span>", unsafe_allow_html=True)
             st.markdown("---")
             pred = lr_model.predict(X_train)
             pred_proba = lr_model.predict_proba(X_train)[:, 1]
@@ -410,8 +395,9 @@ def processing(data, model):
             display_results(y_train, pred, pred_proba)
             plot_feature_importance_lr(lr_model, X_train)
 
-        with con3:
-            st.markdown("Test")
+        with con4:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>Test feature_importance</span>", unsafe_allow_html=True)
             st.markdown("---")
             pred = lr_model.predict(X_test)
             pred_proba = lr_model.predict_proba(X_test)[:, 1]
@@ -419,40 +405,65 @@ def processing(data, model):
             display_results(y_test, pred, pred_proba)
             plot_feature_importance_lr(lr_model, X_test)
 
-        with con4:
+        with con2:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>DWI(산불위험지수)</span>", unsafe_allow_html=True)
+            st.markdown("---")
             plot_dwi_intervals(y_test, pred, pred_proba)
 
     elif model == "XGBoost":
+        with con3:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>Train feature_importance</span>", unsafe_allow_html=True)
+            st.markdown("---")
+            pred = xgb_model.predict(X_train)
+            pred_proba = xgb_model.predict_proba(X_train)[:, 1]
 
-        pred = xgb_model.predict(X_train)
-        pred_proba = xgb_model.predict_proba(X_train)[:, 1]
+            display_results(y_train, pred, pred_proba)
+            plot_feature_importance(xgb_model, feature_names)
 
-        display_results(y_train, pred, pred_proba)
-        plot_feature_importance(xgb_model, feature_names)
+        with con4:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>Test feature_importance</span>", unsafe_allow_html=True)
+            st.markdown("---")
+            pred = xgb_model.predict(X_test)
+            pred_proba = xgb_model.predict_proba(X_test)[:, 1]
 
-        pred = xgb_model.predict(X_test)
-        pred_proba = xgb_model.predict_proba(X_test)[:, 1]
+            display_results(y_test, pred, pred_proba)
+            plot_feature_importance(xgb_model, feature_names)
 
-        display_results(y_test, pred, pred_proba)
-        plot_feature_importance(xgb_model, feature_names)
-
-        plot_dwi_intervals(y_test, pred, pred_proba)
+        with con2:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>DWI(산불위험지수)</span>", unsafe_allow_html=True)
+            st.markdown("---")
+            plot_dwi_intervals(y_test, pred, pred_proba)
 
     elif model == "LightGBM":
+        with con3:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>Train feature_importance</span>", unsafe_allow_html=True)
+            st.markdown("---")
+            pred = lgb_model.predict(X_train)
+            pred_proba = lgb_model.predict_proba(X_train)[:, 1]
 
-        pred = lgb_model.predict(X_train)
-        pred_proba = lgb_model.predict_proba(X_train)[:, 1]
+            display_results(y_train, pred, pred_proba)
+            plot_feature_importance(lgb_model, feature_names)
 
-        display_results(y_train, pred, pred_proba)
-        plot_feature_importance(lgb_model, feature_names)
+        with con4:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>Test feature_importance</span>", unsafe_allow_html=True)
+            st.markdown("---")
+            pred = lgb_model.predict(X_test)
+            pred_proba = lgb_model.predict_proba(X_test)[:, 1]
 
-        pred = lgb_model.predict(X_test)
-        pred_proba = lgb_model.predict_proba(X_test)[:, 1]
+            display_results(y_test, pred, pred_proba)
+            plot_feature_importance(lgb_model, feature_names)
 
-        display_results(y_test, pred, pred_proba)
-        plot_feature_importance(lgb_model, feature_names)
-
-        plot_dwi_intervals(y_test, pred, pred_proba)
+        with con2:
+            st.markdown("---")
+            st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>DWI (산불위험지수)</span>", unsafe_allow_html=True)
+            st.markdown("---")
+            plot_dwi_intervals(y_test, pred, pred_proba)
 
 
     with con1:
@@ -489,8 +500,12 @@ def processing(data, model):
         plt.plot([0, 1], [0, 1], label=f'RandomClassfier (AUC = 0.5)', color='black', linestyle="dashed")
         plt.xlabel("False Positive Rate (Positive label: 1)")
         plt.ylabel("True Positive Rate (Positive label: 1)")
-        plt.title(f"ROC curve of Site 1")
+        plt.title(f"ROC-AUC Curve")
         plt.legend()
+
+        st.markdown("---")
+        st.markdown(f"<h2 style='font-size: 24px; text-align: center; color: black;'>모델 성능 비교</span>", unsafe_allow_html = True)
+        st.markdown("---")
         st.pyplot(plt)
 
 def model_app():
@@ -503,4 +518,118 @@ def model_app():
         selected_model = st.selectbox("SELECT MODEL", ["LogisticRegression", "XGBoost", "LightGBM"])
 
     if selected_data == "Site_1" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
         processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_1" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_1" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_2" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_2" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_2" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_3" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_3" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_3" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_4" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_4" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_4" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_5" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_5" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_5" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_6" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_6" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_6" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_7" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_7" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_7" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_8" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_8" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_8" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")
+
+    if selected_data == "Site_9" and selected_model == "LogisticRegression":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LogisticRegression")
+    elif selected_data == "Site_9" and selected_model == "XGBoost":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "XGBoost")
+    elif selected_data == "Site_9" and selected_model == "LightGBM":
+        st.markdown(f"<h2 style='text-align: center; color: black;'>{selected_data} - {selected_model} Model</span>", unsafe_allow_html = True)
+        st.markdown("---")
+        processing(data_1, "LightGBM")

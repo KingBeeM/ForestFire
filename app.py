@@ -25,7 +25,6 @@ def main():
                        layout="wide",
                        initial_sidebar_state="auto",
                        menu_items=None)
-    st.markdown("---")
 
     # Streamlit 앱 실행
     with st.sidebar:
