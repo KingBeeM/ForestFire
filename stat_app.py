@@ -42,7 +42,7 @@ def twoMeans(data):
     data1 = data1.dropna()
     data0 = data0.dropna()
 
-    result = ttest(data1, data0, correction=False)
+    result = ttest(data1, data0, correction=False, confidence=0.99)
     st.dataframe(result)
 
     if result['p-val'].values > 0.05:
