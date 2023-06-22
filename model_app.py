@@ -109,6 +109,70 @@ def split_train_test(data):
 
     return X_train_over, X_test, y_train_over, y_test
 
+def train_logistic_regression(X_train, y_train):
+    # Train logistic regression model
+    lr_model = LogisticRegression(solver='liblinear', random_state=0)
+    lr_model.fit(X_train, y_train)
+    return lr_model
+
+def train_xgboost(X_train, y_train):
+    # Train XGBoost model
+    params = {
+        'objective': 'binary:logistic',
+        'max_depth': 4,
+        'alpha': 10,
+        'learning_rate': 1.0,
+        'n_estimators': 100
+    }
+    xgb_model = XGBClassifier(booster='gbtree', importance_type='gain', **params)
+    xgb_model.fit(X_train, y_train)
+    return xgb_model
+
+def train_lightgbm(X_train, y_train):
+    # Train LightGBM model
+    params = {
+        'class_weight': 'balanced',
+        'drop_rate': 0.9,
+        'min_data_in_leaf': 100,
+        'max_bin': 255,
+        'n_estimators': 500,
+        'min_sum_hessian_in_leaf': 1,
+        'learning_rate': 0.1,
+        'bagging_fraction': 0.85,
+        'colsample_bytree': 1.0,
+        'feature_fraction': 0.1,
+        'lambda_l1': 5.0,
+        'lambda_l2': 3.0,
+        'max_depth': 9,
+        'min_child_samples': 55,
+        'min_child_weight': 5.0,
+        'min_split_gain': 0.1,
+        'num_leaves': 45,
+        'subsample': 0.75
+    }
+    lgb_model = LGBMClassifier(boosting_type='dart', importance_type='gain', **params)
+    lgb_model.fit(X_train, y_train)
+    return lgb_model
+
+
+def classification_report_to_dataframe(report):
+    report_data = []
+    lines = report.split('\n')
+    for line in lines[2:-3]:
+        row = line.split()
+        if len(row) >= 5:
+            class_name = row[0]
+            precision = float(row[1])
+            recall = float(row[2])
+            f1_score = float(row[3])
+            support = int(row[4])
+            report_data.append([class_name, precision, recall, f1_score, support])
+
+    df = pd.DataFrame(report_data, columns=['Class', 'Precision', 'Recall', 'F1-Score', 'Support'])
+    df.set_index('Class', inplace=True)
+
+    return df
+
 def display_results (y_real, pred, pred_proba):
     """
     분류 결과를 출력합니다.
@@ -136,7 +200,24 @@ def display_results (y_real, pred, pred_proba):
     st.write("ROC AUC score is : ", roc_auc_score(y_real, pred_proba))
     st.write('======================================================')
     st.write("Classification report is:")
-    st.write(classification_report(y_real, pred))
+    st.write(classification_report_to_dataframe(classification_report(y_real, pred)))
+
+def plot_feature_importance_lr(model, X_train):
+    coefficients = model.coef_[0]
+    feature_importance = pd.DataFrame({'Feature': X_train.columns, 'Importance': np.abs(coefficients)})
+    feature_importance = feature_importance.sort_values('Importance', ascending=True)
+    feature_importance.plot.barh(x='Feature', y='Importance', figsize=(10, 6), legend=False, title='Feature Importance')
+    st.pyplot(plt)
+
+def plot_feature_importance(model, feature_names):
+    importances = model.feature_importances_
+    indices = np.argsort(importances)
+    plt.figure(figsize=(10, 6))
+    plt.barh(range(len(indices)), importances[indices], align='center')
+    plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
+    plt.xlabel('Importance')
+    plt.title('Feature Importance')
+    st.pyplot(plt)
 
 
 def calculate_tpr_fpr(y_real, y_pred):
@@ -164,7 +245,6 @@ def calculate_tpr_fpr(y_real, y_pred):
     fpr = 1 - TN / (TN + FP)  # 1-specificity - false positive rate
 
     return tpr, fpr
-
 
 def get_n_roc_coordinates(y_real, y_proba, n=50):
     """
@@ -211,7 +291,6 @@ def plot_roc_curve(tpr, fpr, scatter = True):
     plt.xlabel("False Positive Rate (Positive label: 1)")
     plt.ylabel("True Positive Rate (Positive label: 1)")
     st.pyplot(plt)
-
 
 def plot_dwi_intervals(y_real, pred, pred_proba, num_intervals=10):
     """
@@ -303,169 +382,125 @@ def plot_dwi_intervals(y_real, pred, pred_proba, num_intervals=10):
     max_value = max(df['Forestfire_occur'].max(), df['Non_Forestfire_occur'].max())
     plt.ylim(bottom=-50, top=max_value + 150)
 
-    st.pyplot(plt);
+    st.pyplot(plt)
 
-def processing(data):
+def processing(data, model):
     X_train, X_test, y_train, y_test = split_train_test(data)
-
-    lr_model = LogisticRegression(solver='liblinear', random_state=0)
-    lr_model.fit(X_train, y_train)
-
-    pred = lr_model.predict(X_train)
-    pred_proba = lr_model.predict_proba(X_train)[:, 1]
-
-    display_results(y_train, pred, pred_proba)
-
-    coefficients = lr_model.coef_[0]
-
-    feature_importance = pd.DataFrame({'Feature': X_train.columns, 'Importance': np.abs(coefficients)})
-    feature_importance = feature_importance.sort_values('Importance', ascending=True)
-    plt.figure()
-    feature_importance.plot.barh(x='Feature', y='Importance', figsize=(10, 6), legend=False, title='feature importance')
-    st.pyplot(plt)
-
-    pred = lr_model.predict(X_test)
-    pred_proba = lr_model.predict_proba(X_test)[:, 1]
-
-    display_results(y_test, pred, pred_proba)
-
-    coefficients = lr_model.coef_[0]
-
-    feature_importance = pd.DataFrame({'Feature': X_test.columns, 'Importance': np.abs(coefficients)})
-    feature_importance = feature_importance.sort_values('Importance', ascending=True)
-    plt.figure()
-    feature_importance.plot.barh(x='Feature', y='Importance', figsize=(6, 4), legend=False, title='logistic regression feature importance')
-    st.pyplot(plt)
-
-    plot_dwi_intervals(y_test, pred, pred_proba)
-
-    # XGB
-    params = {
-        'objective': 'binary:logistic',
-        'max_depth': 4,
-        'alpha': 10,
-        'learning_rate': 1.0,
-        'n_estimators': 100
-    }
-
-    xgb_model = XGBClassifier(booster='gbtree', importance_type='gain', **params)
-    xgb_model.fit(X_train, y_train)
-
-    xgb_model.feature_importances_
-
-    pred = xgb_model.predict(X_train)
-    pred_proba = xgb_model.predict_proba(X_train)[:, 1]
-
-    display_results(y_train, pred, pred_proba)
-
-    sorted_idx = xgb_model.feature_importances_.argsort()
-    plt.figure()
-    plt.barh(X_train.columns[sorted_idx], xgb_model.feature_importances_[sorted_idx])
-    plt.title("Xgboost Feature Importance")
-    st.pyplot(plt)
-
-    pred = xgb_model.predict(X_test)
-    pred_proba = xgb_model.predict_proba(X_test)[:, 1]
-
-    display_results(y_test, pred, pred_proba)
-
-    sorted_idx = xgb_model.feature_importances_.argsort()
-    plt.figure()
-    plt.barh(X_test.columns[sorted_idx], xgb_model.feature_importances_[sorted_idx])
-    plt.title("Xgboost Feature Importance")
-    st.pyplot(plt)
-
-    plot_dwi_intervals(y_test, pred, pred_proba)
-
-    # LGBM
-    params = {
-        'class_weight': 'balanced',
-        'drop_rate': 0.9,
-        'min_data_in_leaf': 100,
-        'max_bin': 255,
-        'n_estimators': 500,
-        'min_sum_hessian_in_leaf': 1,
-        'learning_rate': 0.1,
-        'bagging_fraction': 0.85,
-        'colsample_bytree': 1.0,
-        'feature_fraction': 0.1,
-        'lambda_l1': 5.0,
-        'lambda_l2': 3.0,
-        'max_depth': 9,
-        'min_child_samples': 55,
-        'min_child_weight': 5.0,
-        'min_split_gain': 0.1,
-        'num_leaves': 45,
-        'subsample': 0.75
-    }
-
-    lgb_model = LGBMClassifier(boosting_type='dart', importance_type='gain', **params)
-    lgb_model.fit(X_train, y_train)
-
-    lgb_model.feature_importances_
-
-    pred = lgb_model.predict(X_train)
-    pred_proba = lgb_model.predict_proba(X_train)[:, 1]
-
-    display_results(y_train, pred, pred_proba)
-
-    sorted_idx = lgb_model.feature_importances_.argsort()
-    plt.figure()
-    plt.barh(X_train.columns[sorted_idx], lgb_model.feature_importances_[sorted_idx])
-    plt.title("LightGBM Feature Importance")
-    st.pyplot(plt)
-
-    pred = lgb_model.predict(X_test)
-    pred_proba = lgb_model.predict_proba(X_test)[:, 1]
-
-    display_results(y_test, pred, pred_proba)
-
-    sorted_idx = lgb_model.feature_importances_.argsort()
-    plt.figure()
-    plt.barh(X_test.columns[sorted_idx], lgb_model.feature_importances_[sorted_idx])
-    plt.title("LightGBM Feature Importance")
-    st.pyplot(plt)
-
-    plot_dwi_intervals(y_test, pred, pred_proba)
+    feature_names = X_train.columns
 
     # LR
-    lr_model.fit(X_train, y_train)
-    y_pred_lr = lr_model.predict(X_test)
-    y_proba_lr = lr_model.predict_proba(X_test)
-
+    lr_model = train_logistic_regression(X_train, y_train)
     # XGB
-    xgb_model.fit(X_train, y_train)
-    y_pred_xgb = xgb_model.predict(X_test)
-    y_proba_xgb = xgb_model.predict_proba(X_test)
-
+    xgb_model = train_xgboost(X_train, y_train)
     # LGBM
-    lgb_model.fit(X_train, y_train)
-    y_pred_lgb = lgb_model.predict(X_test)
-    y_proba_lgb = lgb_model.predict_proba(X_test)
+    lgb_model = train_lightgbm(X_train, y_train)
 
-    # Plots the ROC curve using the sklearn methods (sklearn + matplolib.pyplot)
-    fpr_lr, tpr_lr, _ = roc_curve(y_test, y_proba_lr[:, 1])
-    fpr_xgb, tpr_xgb, _ = roc_curve(y_test, y_proba_xgb[:, 1])
-    fpr_lgb, tpr_lgb, _ = roc_curve(y_test, y_proba_lgb[:, 1])
+    empty1, con1, empty2 = st.columns([0.3, 1.0, 0.3])
+    empyt1, con2, con3, empty2 = st.columns([0.3, 0.5, 0.5, 0.3])
+    empyt1, con4, empty2 = st.columns([0.3, 1.0, 0.3])
+    empyt1, con5, con6, empty2 = st.columns([0.3, 0.5, 0.5, 0.3])
 
-    roc_auc_lr = auc(fpr_lr, tpr_lr)
-    roc_auc_xgb = auc(fpr_xgb, tpr_xgb)
-    roc_auc_lgb = auc(fpr_lgb, tpr_lgb)
+    if model == "LogisticRegression":
+        with con2:
+            st.markdown("Train")
+            st.markdown("---")
+            pred = lr_model.predict(X_train)
+            pred_proba = lr_model.predict_proba(X_train)[:, 1]
 
-    plt.figure(figsize=(6, 4))
-    plt.grid(False)
+            display_results(y_train, pred, pred_proba)
+            plot_feature_importance_lr(lr_model, X_train)
 
-    plt.plot(fpr_lr, tpr_lr, label=f'LogisticRegression (AUC = {roc_auc_lr:.3f})', color='cornflowerblue')
-    plt.plot(fpr_xgb, tpr_xgb, label=f'XGBClassifier (AUC = {roc_auc_xgb:.3f})', color='darkorange')
-    plt.plot(fpr_lgb, tpr_lgb, label=f'LGBMClassifier (AUC = {roc_auc_lgb:.3f})', color='red')
-    plt.plot([0, 1], [0, 1], label=f'RandomClassfier (AUC = 0.5)', color='black', linestyle="dashed")
-    plt.xlabel("False Positive Rate (Positive label: 1)")
-    plt.ylabel("True Positive Rate (Positive label: 1)")
-    plt.title("ROC curve of Site 1")
-    plt.legend()
-    st.pyplot(plt)
+        with con3:
+            st.markdown("Test")
+            st.markdown("---")
+            pred = lr_model.predict(X_test)
+            pred_proba = lr_model.predict_proba(X_test)[:, 1]
+
+            display_results(y_test, pred, pred_proba)
+            plot_feature_importance_lr(lr_model, X_test)
+
+        with con4:
+            plot_dwi_intervals(y_test, pred, pred_proba)
+
+    elif model == "XGBoost":
+
+        pred = xgb_model.predict(X_train)
+        pred_proba = xgb_model.predict_proba(X_train)[:, 1]
+
+        display_results(y_train, pred, pred_proba)
+        plot_feature_importance(xgb_model, feature_names)
+
+        pred = xgb_model.predict(X_test)
+        pred_proba = xgb_model.predict_proba(X_test)[:, 1]
+
+        display_results(y_test, pred, pred_proba)
+        plot_feature_importance(xgb_model, feature_names)
+
+        plot_dwi_intervals(y_test, pred, pred_proba)
+
+    elif model == "LightGBM":
+
+        pred = lgb_model.predict(X_train)
+        pred_proba = lgb_model.predict_proba(X_train)[:, 1]
+
+        display_results(y_train, pred, pred_proba)
+        plot_feature_importance(lgb_model, feature_names)
+
+        pred = lgb_model.predict(X_test)
+        pred_proba = lgb_model.predict_proba(X_test)[:, 1]
+
+        display_results(y_test, pred, pred_proba)
+        plot_feature_importance(lgb_model, feature_names)
+
+        plot_dwi_intervals(y_test, pred, pred_proba)
+
+
+    with con1:
+        # LR
+        lr_model.fit(X_train, y_train)
+        y_pred_lr = lr_model.predict(X_test)
+        y_proba_lr = lr_model.predict_proba(X_test)
+
+        # XGB
+        xgb_model.fit(X_train, y_train)
+        y_pred_xgb = xgb_model.predict(X_test)
+        y_proba_xgb = xgb_model.predict_proba(X_test)
+
+        # LGBM
+        lgb_model.fit(X_train, y_train)
+        y_pred_lgb = lgb_model.predict(X_test)
+        y_proba_lgb = lgb_model.predict_proba(X_test)
+
+        # Plots the ROC curve using the sklearn methods (sklearn + matplolib.pyplot)
+        fpr_lr, tpr_lr, _ = roc_curve(y_test, y_proba_lr[:, 1])
+        fpr_xgb, tpr_xgb, _ = roc_curve(y_test, y_proba_xgb[:, 1])
+        fpr_lgb, tpr_lgb, _ = roc_curve(y_test, y_proba_lgb[:, 1])
+
+        roc_auc_lr = auc(fpr_lr, tpr_lr)
+        roc_auc_xgb = auc(fpr_xgb, tpr_xgb)
+        roc_auc_lgb = auc(fpr_lgb, tpr_lgb)
+
+        plt.figure(figsize=(6, 4))
+        plt.grid(False)
+
+        plt.plot(fpr_lr, tpr_lr, label=f'LogisticRegression (AUC = {roc_auc_lr:.3f})', color='cornflowerblue')
+        plt.plot(fpr_xgb, tpr_xgb, label=f'XGBClassifier (AUC = {roc_auc_xgb:.3f})', color='darkorange')
+        plt.plot(fpr_lgb, tpr_lgb, label=f'LGBMClassifier (AUC = {roc_auc_lgb:.3f})', color='red')
+        plt.plot([0, 1], [0, 1], label=f'RandomClassfier (AUC = 0.5)', color='black', linestyle="dashed")
+        plt.xlabel("False Positive Rate (Positive label: 1)")
+        plt.ylabel("True Positive Rate (Positive label: 1)")
+        plt.title(f"ROC curve of Site 1")
+        plt.legend()
+        st.pyplot(plt)
 
 def model_app():
     data_1, data_2, data_3, data_4, data_5, data_6, data_7, data_8, data_9 = utils.load_data("ANALSIS_DATA")
 
-    processing(data_1)
+    with st.sidebar:
+        selected_data = st.selectbox("SELECT DATA", ["Site_1", "Site_2", "Site_3",
+                                                     "Site_4", "Site_5", "Site_6",
+                                                     "Site_7", "Site_8", "Site_9"])
+        selected_model = st.selectbox("SELECT MODEL", ["LogisticRegression", "XGBoost", "LightGBM"])
+
+    if selected_data == "Site_1" and selected_model == "LogisticRegression":
+        processing(data_1, "LogisticRegression")

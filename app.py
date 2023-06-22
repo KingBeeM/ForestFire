@@ -10,15 +10,23 @@ import stat_app
 import model_app
 import service_app
 
+import time
 import warnings
 warnings.filterwarnings("ignore")
+
 
 def main():
     """
         Main function to run the Streamlit app.
     """
 
-    st.set_page_config(page_title="Forest Fire ")
+    st.set_page_config(page_title="강원도 산불 예측 및 피해 최소화 프로젝트",
+                       page_icon=None,
+                       layout="wide",
+                       initial_sidebar_state="auto",
+                       menu_items=None)
+    st.markdown("---")
+
     # Streamlit 앱 실행
     with st.sidebar:
         selected = option_menu("Main Menu", ["HOME", "DATA", "EDA", "STAT", "MODEL", "SERVICE"],
