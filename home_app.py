@@ -39,7 +39,6 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 import utils
-import data_app
 import eda_app
 import stat_app
 import model_app
