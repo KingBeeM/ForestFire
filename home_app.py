@@ -483,7 +483,6 @@ def create_dwi_choropleth_map(dataframe, geometry_column, dwi_columns):
 
     st_folium(map)
 
-
 def home_app():
     """
         Renders the introduction section of the app, including tabs for overview, objectives, and analysis phases.
