@@ -15,9 +15,7 @@ from PIL import Image
 import warnings
 warnings.filterwarnings("ignore")
 
-credentials = service_account.Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"]
-)
+credentials = service_account.Credentials.from_service_account_info(st.secrets.get("gcp_service_account"))
 
 servicekey = st.secrets.api_key.data_serviceKey
 
