@@ -5,14 +5,14 @@
 
 ## [2. Personal Code](https://github.com/KingBeeM/ForestFire/tree/main/file/code/ ".Code Link")<br/>
 
-## [3. Deep Learning](https://github.com/KingBeeM/ForestFire/tree/main/file/code/DL_EfficientNet/ ".DL Link")<br/>
+## [3. Deep Learning](https://github.com/KingBeeM/ForestFire/blob/main/file/code/DL_EfficientNet.ipynb/ ".DL Link")<br/>
 
 ## [4. PDF](https://github.com/KingBeeM/ForestFire/tree/main/file/ppt/Forestfire.pdf/ "PDF Link")<br/>
 
 ---
 
 ## ✔ 목적
-Gangwon-do Forest Fire Prediction and Damage Minimization Project: Model Development Using Machine Learning and Deep Learning
+강원도 산불 예측 및 피해 최소화 프로젝트 : 머신러닝과 딥러닝을 활용한 모델 개발
 <br/>
 
 ## ✔ 데이터
@@ -28,86 +28,92 @@ Gangwon-do Forest Fire Prediction and Damage Minimization Project: Model Develop
 <br/>
 
 ## ✔ ERD
-![image](https://github.com/KingBeeM/ForestFire/tree/main/file/img/ERD.png)
+![image](https://github.com/KingBeeM/ForestFire/blob/main/file/img/ERD.png)
 <br/>
 
 ## ✔ Flow Chart
-![image](https://github.com/KingBeeM/ForestFire/tree/main/file/img/flowchart.png)
+![image](https://github.com/KingBeeM/ForestFire/blob/main/file/img/flowchart.png)
 <br/>
 
 ## ✔ 팀 구성
 - 사용언어 : Python
 - 작업툴 : VS Code / PyCharm / Google Colab / Google BigQuery / QGIS / IBM SPSS Statistics
 - 인원 : 4명
-- 주요 업무 : 머신러닝과 딥러닝을 통한 강원도 산불예측모델 및 산불분류모델
+- 주요 업무 : 강원도 산불 예측 및 피해 최소화 프로젝트 : 머신러닝과 딥러닝을 활용한 모델 개발
 - 기간 : 2023.05.22 ~ 2023.06.23
 
 ## ✔ 주요 기능
 - **HOME**
   - 강원도 산불위험지수(DWI) 지도시각화
-    - 강원도 지역을 9개로 나누어서 각각 지역에 대해 ML 모델을 만듬
-    - 실시간 API 요청을 통한 각 지역의 산불위험지수(DWI)를 구함
-    - 각 지역별 산불위험지수를 지도시각화를 통해 보여줌
+    - 기상요인을 고려해 강원도 지역을 9개로 나누어서 각각 지역에 대해 ML 모델 생성
+    - 실시간 API 요청을 통한 각 지역별 실시간 산불위험지수(DWI) 지도시각화
 
-![image1](https://github.com/KingBeeM/ForestFire/tree/main/file/img/HOME_img.png)
+![image1](https://github.com/KingBeeM/ForestFire/blob/main/file/img/HOME_img.png)
 - **EDA**
   - 
 
-![image1](https://github.com/KingBeeM/ForestFire/tree/main/file/img/EDA_img.png)
+![image2](https://github.com/KingBeeM/ForestFire/blob/main/file/img/EDA_img.png)
 - **STAT**
   - 
 
-![image3](https://github.com/KingBeeM/storesales_streamlit_by_Kaggle/blob/main/img/model_img.png)
+![image3](https://github.com/KingBeeM/ForestFire/blob/main/file/img/model_img.png)
 - **ML**
-  - 
+  - 기상요인을 고려해 강원도 지역을 9개로 나누어서 각각 지역에 대해 ML 모델 생성
+  - 각 지역별로 LogisticRegression / XGBoost / LightGBM 모델 생성
+  - 각 모델별 ROC-AUC 비교를 통한 각 지역별 적합한 모델 선정
 
-![image4](https://github.com/KingBeeM/storesales_streamlit_by_Kaggle/blob/main/img/model_img.png)
+![image4](https://github.com/KingBeeM/ForestFire/blob/main/file/img/model_img.png)
 - **DL**
   - EfficentNet-B7 모델을 사용한 산불 이미지 분류 모델
+  - 6개의 Class 에 대해 모델 훈련
+  - Precision / Recall 을 고려한 Top 2 Accuracy 사용
+  - Warning message 와 GPS 기반 주소 및 이미지 전송
 
-![image5](https://github.com/KingBeeM/storesales_streamlit_by_Kaggle/blob/main/img/DL.png)
+![image5](https://github.com/KingBeeM/ForestFire/blob/main/file/img/DL.png)
 ## ✔ 설치 방법
 
 ### Windows
 - 버전 확인
   - VS Code / PyCharm : 
 ```
-  Python: 3.10.9
+Python: 3.10.9
 ```
   - Google Colab
+
   - 라이브러리 : 
 ```
-  beautifulsoup4: 4.11.1
-  bs4: 0.0.1
-  db-dtypes: 1.1.1
-  Flask: 2.2.2
-  folium: 0.14.0
-  geopandas: 0.13.0
-  google-cloud-bigquery: 3.11.0
-  googlemaps: 4.10.0
-  keras: 2.12.0
-  lxml: 4.9.1
-  matplotlib: 3.7.0
-  missingno: 0.5.2
-  numpy: 1.23.5
-  opencv-python: 4.7.0.72
-  pandas: 1.5.3
-  pandas-gbq: 0.19.2
-  pingouin: 0.5.3
-  plotly: 5.9.0
-  scikit-learn: 1.2.1
-  seaborn: 0.12.2
-  selenium: 4.8.3
-  shapely: 2.0.1
-  statsmodels: 0.13.5
-  streamlit: 1.20.0
-  streamlit-option-menu: 0.3.5
-  streamlit-pandas-profiling: 0.1.3
-  tensorflow: 2.12.0
-  torch: 2.0.0
-  torchvision: 0.15.1
-  tqdm: 4.64.1
-  xgboost: 1.7.5
+beautifulsoup4==4.11.1
+bs4==0.0.1
+db-dtypes==1.1.1
+Flask==2.2.2
+folium==0.14.0
+geopandas==0.13.0
+google-cloud-bigquery==3.11.0
+googlemaps==4.10.0
+keras==2.12.0
+lxml==4.9.1
+matplotlib==3.7.0
+missingno==0.5.2
+numpy==1.23.5
+opencv-python==4.7.0.72
+pandas==1.5.3
+pandas-gbq==0.19.2
+pingouin==0.5.3
+plotly==5.9.0
+scikit-learn==1.2.1
+seaborn==0.12.2
+selenium==4.8.3
+shapely==2.0.1
+statsmodels==0.13.5
+streamlit==1.20.0
+streamlit-option-menu==0.3.5
+streamlit-pandas-profiling==0.1.3
+tensorflow==2.12.0
+torch==2.0.0
+torchvision==0.15.1
+tornado==6.1
+tqdm==4.64.1
+xgboost==1.7.5
 ```
 - 프로젝트 파일을 다운로드 받습니다.
 ```
