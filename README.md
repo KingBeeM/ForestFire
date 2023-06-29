@@ -7,7 +7,7 @@
 
 ## [3. Deep Learning](https://github.com/KingBeeM/ForestFire/blob/main/file/code/DL_EfficientNet.ipynb/ ".DL Link")<br/>
 
-## [4. PDF](https://github.com/KingBeeM/ForestFire/tree/main/file/ppt/Forestfire.pdf/ "PDF Link")<br/>
+## [4. PDF File](https://github.com/KingBeeM/ForestFire/blob/main/file/ppt/ForestFire.pdf/ "PDF Link")<br/>
 
 ---
 
