@@ -508,7 +508,7 @@ def home_app():
         st.markdown("<h4 style='font-size: 24px; text-align: center; color: black;'>🔥🌳 실시간 산불위험지수(DWI) 🌳🔥</h4>",
                     unsafe_allow_html=True)
         st.markdown("")
-        st.markdown(f"<h6 style='font-size: 16px; text-align: center; color: black;'> 봄철 ({target_date}) 을 예시로 시각화 </h4>",
+        st.markdown(f"<h6 style='font-size: 16px; text-align: center; color: black;'> ({target_date}) 실시간 DWI 지수 시각화 </h4>",
                     unsafe_allow_html=True)
     with con3:
         create_dwi_choropleth_map(merged_df, "geometry", "DWI")

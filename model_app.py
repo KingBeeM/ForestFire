@@ -40,6 +40,15 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
+@st.cache_data()
+def font_set():
+    # matplotlib 한글 폰트 설정
+    font_dirs = [os.getcwd() + '/nanum']
+    font_files = fm.findSystemFonts(fontpaths=font_dirs)
+    for font_file in font_files:
+        fm.fontManager.addfont(font_file)
+    plt.rcParams['font.family'] = 'NanumGothic'
+
 def split_train_test(data):
     """
     입력된 데이터를 학습 및 테스트 데이터로 분할하고 클래스 불균형을 해결하기 위해 SMOTE를 적용합니다.
@@ -195,6 +204,14 @@ def plot_feature_importance_lr(model, X_train):
        Returns:
            None
     """
+    font_set()
+    font_Names = [f.name for f in fm.fontManager.ttflist]
+    plt.rc('font', family=font_Names)
+    plt.style.use('default')
+    plt.rcParams['figure.figsize'] = (10, 5)
+    plt.rcParams['font.size'] = 12
+    plt.rcParams['axes.unicode_minus'] = False
+
     coefficients = model.coef_[0]
     feature_importance = pd.DataFrame({'Feature': X_train.columns, 'Importance': np.abs(coefficients)})
     feature_importance = feature_importance.sort_values('Importance', ascending=True)
@@ -212,6 +229,14 @@ def plot_feature_importance(model, feature_names):
         Returns:
             None
     """
+    font_set()
+    font_Names = [f.name for f in fm.fontManager.ttflist]
+    plt.rc('font', family=font_Names)
+    plt.style.use('default')
+    plt.rcParams['figure.figsize'] = (10, 5)
+    plt.rcParams['font.size'] = 12
+    plt.rcParams['axes.unicode_minus'] = False
+
     importances = model.feature_importances_
     indices = np.argsort(importances)
     plt.figure(figsize=(10, 6))
@@ -286,6 +311,13 @@ def plot_roc_curve(tpr, fpr, scatter = True):
     Returns:
         None
     """
+    font_set()
+    font_Names = [f.name for f in fm.fontManager.ttflist]
+    plt.rc('font', family=font_Names)
+    plt.style.use('default')
+    plt.rcParams['figure.figsize'] = (10, 5)
+    plt.rcParams['font.size'] = 12
+    plt.rcParams['axes.unicode_minus'] = False
 
     plt.figure(figsize = (5, 5))
     sns.lineplot(x = fpr, y = tpr)
@@ -359,6 +391,14 @@ def plot_dwi_intervals(y_real, pred, pred_proba, num_intervals=10):
     }
 
     df = pd.DataFrame(data)
+
+    font_set()
+    font_Names = [f.name for f in fm.fontManager.ttflist]
+    plt.rc('font', family=font_Names)
+    plt.style.use('default')
+    plt.rcParams['figure.figsize'] = (10, 5)
+    plt.rcParams['font.size'] = 12
+    plt.rcParams['axes.unicode_minus'] = False
 
     plt.figure()
     # 그래프 그리기

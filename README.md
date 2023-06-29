@@ -68,41 +68,40 @@ Store Sales 대회에서 제공하는 데이터를 사용하였습니다.<br/>
 ### Windows
 - 버전 확인
   - VS Code / PyCharm : 
-  - Python : 3.10.9
+    - Python: 3.10.9
   - 라이브러리 : 
-      beautifulsoup4                4.11.1
-      bs4                           0.0.1
-      db-dtypes                     1.1.1
-      Flask                         2.2.2
-      folium                        0.14.0
-      geopandas                     0.13.0
-      google-cloud-bigquery         3.11.0
-      googlemaps                    4.10.0
-      keras                         2.12.0
-      lxml                          4.9.1
-      matplotlib                    3.7.0
-      missingno                     0.5.2
-      numpy                         1.23.5
-      opencv-python                 4.7.0.72
-      pandas                        1.5.3
-      pandas-gbq                    0.19.2
-      pingouin                      0.5.3
-      plotly                        5.9.0
-      scikit-learn                  1.2.1
-      seaborn                       0.12.2
-      selenium                      4.8.3
-      shapely                       2.0.1
-      statsmodels                   0.13.5
-      streamlit                     1.20.0
-      streamlit-option-menu         0.3.5
-      streamlit-pandas-profiling    0.1.3
-      tensorflow                    2.12.0
-      torch                         2.0.0
-      torchvision                   0.15.1
-      tornado                       6.1
-      tqdm                          4.64.1
-      xgboost                       1.7.5
-
+    - beautifulsoup4: 4.11.1
+    - bs4: 0.0.1
+    - db-dtypes: 1.1.1
+    - Flask: 2.2.2
+    - folium: 0.14.0
+    - geopandas: 0.13.0
+    - google-cloud-bigquery: 3.11.0
+    - googlemaps: 4.10.0
+    - keras: 2.12.0
+    - lxml: 4.9.1
+    - matplotlib: 3.7.0
+    - missingno: 0.5.2
+    - numpy: 1.23.5
+    - opencv-python: 4.7.0.72
+    - pandas: 1.5.3
+    - pandas-gbq: 0.19.2
+    - pingouin: 0.5.3
+    - plotly: 5.9.0
+    - scikit-learn: 1.2.1
+    - seaborn: 0.12.2
+    - selenium: 4.8.3
+    - shapely: 2.0.1
+    - statsmodels: 0.13.5
+    - streamlit: 1.20.0
+    - streamlit-option-menu: 0.3.5
+    - streamlit-pandas-profiling: 0.1.3
+    - tensorflow: 2.12.0
+    - torch: 2.0.0
+    - torchvision: 0.15.1
+    - tornado: 6.1
+    - tqdm: 4.64.1
+    - xgboost: 1.7.5
 
 - 프로젝트 파일을 다운로드 받습니다.
 ```
