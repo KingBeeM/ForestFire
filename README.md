@@ -71,7 +71,7 @@
 - **DL**
   - EfficentNet-B7 모델을 사용한 산불 이미지 분류 모델
   - 6개의 Class 에 대해 모델 훈련
-  - Precision / Recall 을 고려한 Top 2 Accuracy 사용
+  - 신뢰성을 고려하여 성능지표로 Top-2 Accuracy 사용 (상위 2개)
   - Warning message 와 GPS 기반 주소 및 이미지 전송
 
 <img src="/file/img/DL_img.png" width="500" height="600">
@@ -113,7 +113,6 @@ streamlit-pandas-profiling==0.1.3
 tensorflow==2.12.0
 torch==2.0.0
 torchvision==0.15.1
-tornado==6.1
 tqdm==4.64.1
 xgboost==1.7.5
 ```
